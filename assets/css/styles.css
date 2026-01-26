@@ -1,0 +1,22 @@
+body {
+    background: #f7ff26;
+    text-align: center;
+}
+
+header {
+    background: aqua;
+    font-family: Orbitron, monospace;
+    font-size: 40px;
+    position: relative;
+    top: -50px;
+}
+
+img:hover {
+    transform: scale(1.1);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
