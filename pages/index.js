@@ -16,7 +16,7 @@ const Page = styled.main`
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding-top: 4rem;
+  padding: 2rem;
 `;
 
 const Name = styled.h1`

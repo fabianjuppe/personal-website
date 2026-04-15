@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import styled, { keyframes } from "styled-components";
+import { useContext } from "react";
+import { LanguageContext } from "@/pages/_app";
 
 const fadeUp = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -28,7 +30,6 @@ const ImageCard = styled.div`
   flex: 1 1 55%;
   width: 100%;
   aspect-ratio: 16 / 9;
-  /*   height: 500px; */
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -127,6 +128,7 @@ const Description = styled.div`
 
   @media (max-width: 768px) {
     text-align: left;
+    margin-left: 0;
     margin-right: 0;
     transform: translateX(0);
   }
@@ -162,8 +164,8 @@ const IconLink = styled.a`
   align-items: center;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
   }
 
   &:hover {
@@ -212,6 +214,8 @@ const ExternalIcon = () => (
 );
 
 export default function Project({ project, index }) {
+  const { language } = useContext(LanguageContext);
+
   return (
     <Wrapper $reverse={index % 2}>
       <ImageCard>
@@ -221,11 +225,13 @@ export default function Project({ project, index }) {
       </ImageCard>
 
       <InfoPanel $reverse={index % 2}>
-        <Label>{project.label}</Label>
+        <Label>{project.label[language]}</Label>
         <TitleLink href={`/${project.id}`}>
           <Title>{project.title}</Title>
         </TitleLink>
-        <Description $reverse={index % 2}>{project.description[0]}</Description>
+        <Description $reverse={index % 2}>
+          {project.description[language][0]}
+        </Description>
         <TechList>
           {project.programmingLanguages &&
             project.programmingLanguages.map((programmingLanguage) => (
@@ -251,10 +257,20 @@ export default function Project({ project, index }) {
           )}
           {project.link && (
             <IconLink
-              href={project.link}
+              href={project.link[language]}
               target="_blank"
               rel="noreferrer"
               aria-label="External link"
+            >
+              <ExternalIcon />
+            </IconLink>
+          )}
+          {project.pdf && (
+            <IconLink
+              href={project.pdf[language]}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Pdf Document"
             >
               <ExternalIcon />
             </IconLink>
