@@ -3,7 +3,7 @@ import styled from "styled-components";
 import GlobalStyle from "../styles";
 import { t } from "@/lib/translations";
 import Head from "next/head";
-import { IconLink } from "@/styles/shared";
+import { IconLink, Option, Slider, Switch, TextLink } from "@/styles/shared";
 import {
   GitHubIcon,
   LinkedInIcon,
@@ -36,55 +36,9 @@ const LeftIcons = styled.div`
   gap: 1rem;
 `;
 
-const Switch = styled.div`
-  display: flex;
-  background: #112240;
-  border-radius: 999px;
-  padding: 4px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  position: relative;
-  user-select: none;
-
-  &:hover {
-    button:not([data-active="true"]) {
-      color: #64ffda;
-    }
-  }
-`;
-
-const Slider = styled.div`
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  width: 45%;
-  border-radius: 999px;
-  background: #64ffda;
-  transition: transform 0.3s ease;
-
+const LanguageSlider = styled(Slider)`
   transform: ${({ $language }) =>
     $language === "en" ? "translateX(100%)" : "translateX(0%)"};
-`;
-
-const Option = styled.button`
-  border: none;
-  background: transparent;
-  color: #ccd6f6;
-  font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 0.75rem;
-  padding: 6px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-  transition: color 0.2s ease;
-
-  ${({ active }) =>
-    active &&
-    `
-    color: #0a192f;
-    font-weight: 600;
-    `}
 `;
 
 const Footer = styled.footer`
@@ -97,16 +51,6 @@ const Footer = styled.footer`
   font-size: 0.75rem;
   color: #8892b0;
   background: #0a192f;
-`;
-
-const FooterLink = styled.a`
-  color: #8892b0;
-  text-decoration: none;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: #64ffda;
-  }
 `;
 
 export default function App({ Component, pageProps }) {
@@ -191,7 +135,7 @@ export default function App({ Component, pageProps }) {
           <Switch
             onClick={() => toggleLanguage(language === "de" ? "en" : "de")}
           >
-            <Slider $language={language} />
+            <LanguageSlider $language={language} />
 
             <Option data-active={language === "de"} active={language === "de"}>
               DE
@@ -208,9 +152,9 @@ export default function App({ Component, pageProps }) {
 
         <Footer>
           <span>&copy; 2026 Fabian Juppe</span>
-          <FooterLink href="/legal-notice">
+          <TextLink href="/legal-notice">
             {t.legalNotice[language]}
-          </FooterLink>
+          </TextLink>
         </Footer>
       </AppWrapper>
     </AppContext.Provider>

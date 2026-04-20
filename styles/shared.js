@@ -121,6 +121,27 @@ export const MediaCard = styled.div`
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 `;
 
+export const Option = styled.button`
+  border: none;
+  background: transparent;
+  color: #ccd6f6;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 0.2s ease;
+
+  ${({ active }) =>
+    active &&
+    `
+    color: #0a192f;
+    font-weight: 600;
+    `}
+`;
+
 export const Page = styled.main`
   min-height: 100vh;
   background: #0a192f;
@@ -128,6 +149,16 @@ export const Page = styled.main`
   flex-direction: column;
   align-items: center;
   padding: 2rem;
+`;
+
+export const Slider = styled.div`
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 45%;
+  border-radius: 999px;
+  background: #64ffda;
+  transition: transform 0.3s ease;
 `;
 
 export const Subtitle = styled.h2`
@@ -138,6 +169,23 @@ export const Subtitle = styled.h2`
   color: #64ffda;
   margin: 0;
   text-align: center;
+`;
+
+export const Switch = styled.div`
+  display: flex;
+  background: #112240;
+  border-radius: 999px;
+  padding: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+
+  &:hover {
+    button:not([data-active="true"]) {
+      color: #64ffda;
+    }
+  }
 `;
 
 export const TechItem = styled.li`
@@ -154,6 +202,16 @@ export const TechList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+`;
+
+export const TextLink = styled.a`
+  color: #8892b0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #64ffda;
+  }
 `;
 
 export const Title = styled.h1`
