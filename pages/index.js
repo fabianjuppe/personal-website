@@ -26,6 +26,10 @@ const ProjectSlider = styled(Slider)`
     $portfolio === "game" ? "translateX(108%)" : "translateX(0%)"};
 `;
 
+const ProjectOption = styled(Option)`
+  font-size: 1rem;
+`;
+
 export default function Home() {
   const { portfolio, togglePortfolio } = useContext(AppContext);
 
@@ -40,18 +44,18 @@ export default function Home() {
         >
           <ProjectSlider $portfolio={portfolio} />
 
-          <Option
+          <ProjectOption
             data-active={portfolio === "web"}
             active={portfolio === "web"}
           >
             Web Dev
-          </Option>
-          <Option
+          </ProjectOption>
+          <ProjectOption
             data-active={portfolio === "game"}
             active={portfolio === "game"}
           >
             Game Dev
-          </Option>
+          </ProjectOption>
         </Switch>
 
         {portfolio === "game" &&
