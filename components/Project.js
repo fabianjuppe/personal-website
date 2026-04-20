@@ -1,13 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { useContext } from "react";
-import { LanguageContext } from "@/pages/_app";
-
-const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-`;
+import { AppContext } from "@/pages/_app";
+import { TechItem, IconRow, IconLink } from "@/styles/shared";
+import { GitHubIcon, ExternalIcon } from "@/components/Icons";
 
 const Wrapper = styled.section`
   display: flex;
@@ -16,8 +13,6 @@ const Wrapper = styled.section`
   width: 100%;
   max-width: 1200px;
   margin-bottom: 60px;
-  animation: ${fadeUp} 0.6s ease both;
-
   flex-direction: ${({ $reverse }) => ($reverse ? "row-reverse" : "row")};
 
   @media (max-width: 768px) {
@@ -84,7 +79,7 @@ const Title = styled.h3`
   }
 
   &:active {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 
   @media (max-width: 768px) {
@@ -99,7 +94,7 @@ const TitleLink = styled(Link)`
 const Description = styled.div`
   background: #112240;
   border-radius: 4px;
-  padding: 1.25rem 1.5rem;
+  padding: 0.25rem 1.5rem;
   font-size: 0.95rem;
   line-height: 1.65;
   color: #a8b2d8;
@@ -108,13 +103,13 @@ const Description = styled.div`
   ${({ $reverse }) =>
     $reverse
       ? `
-    margin-left: -100px;
-    transform: translateX(100px);
+    margin-left: -200px;
+    transform: translateX(200px);
     text-align: left;
   `
       : `
-    margin-right: -100px;
-    transform: translateX(-100px);
+    margin-right: -200px;
+    transform: translateX(-200px);
     text-align: right;
   `}
 
@@ -134,116 +129,55 @@ const Description = styled.div`
   }
 `;
 
-const TechList = styled.ul`
+export const TechList = styled.ul`
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
   list-style: none;
   padding: 0;
   margin: 0;
-`;
+  justify-content: ${({ $reverse }) => ($reverse ? "flex-start" : "flex-end")};
 
-const TechItem = styled.li`
-  font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 0.78rem;
-  color: #8892b0;
-  white-space: nowrap;
-`;
-
-const IconRow = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
-const IconLink = styled.a`
-  color: #a8b2d8;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-  display: flex;
-  align-items: center;
-
-  svg {
-    width: 26px;
-    height: 26px;
-  }
-
-  &:hover {
-    color: #64ffda;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0px);
+  @media (max-width: 768px) {
+    justify-content: flex-start;
   }
 `;
-
-const GitHubIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path
-      d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54
-      6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0
-      0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3
-      6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-    />
-  </svg>
-);
-
-const ExternalIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-    <polyline points="15 3 21 3 21 9" />
-    <line x1="10" y1="14" x2="21" y2="3" />
-  </svg>
-);
 
 export default function Project({ project, index }) {
-  const { language } = useContext(LanguageContext);
+  const { language } = useContext(AppContext);
+  const reverse = index % 2 !== 0;
 
   return (
-    <Wrapper $reverse={index % 2}>
+    <Wrapper $reverse={reverse}>
       <ImageCard>
         <Link href={`/${project.id}`}>
           <Image src={project.coverArt} fill alt={project.coverArtAlt} />
         </Link>
       </ImageCard>
 
-      <InfoPanel $reverse={index % 2}>
-        <Label>{project.label[language]}</Label>
+      <InfoPanel $reverse={reverse}>
+        {project.label?.[language] && <Label>{project.label[language]}</Label>}
+
         <TitleLink href={`/${project.id}`}>
           <Title>{project.title}</Title>
         </TitleLink>
-        <Description $reverse={index % 2}>
-          {project.description[language][0]}
+        {/* TODO */}
+        <Description $reverse={reverse}>
+          {/*           {project.description[language][0]} */}
+          {project.contribution?.[language].map((p) => (
+            <p key={p}>{p}</p>
+          ))}
         </Description>
-        <TechList>
-          {project.programmingLanguages &&
-            project.programmingLanguages.map((programmingLanguage) => (
-              <TechItem key={programmingLanguage}>
-                {programmingLanguage}
-              </TechItem>
-            ))}
-          {project.software &&
-            project.software.map((software) => (
-              <TechItem key={software}>{software}</TechItem>
-            ))}
+
+        <TechList $reverse={reverse}>
+          {project.programmingLanguages?.map((lang) => (
+            <TechItem key={lang}>{lang}</TechItem>
+          ))}
+          {project.tools?.map((tool) => (
+            <TechItem key={tool}>{tool}</TechItem>
+          ))}
         </TechList>
+
         <IconRow>
           {project.github && (
             <IconLink
@@ -255,7 +189,7 @@ export default function Project({ project, index }) {
               <GitHubIcon />
             </IconLink>
           )}
-          {project.link && (
+          {project.link?.[language] && (
             <IconLink
               href={project.link[language]}
               target="_blank"
@@ -265,12 +199,12 @@ export default function Project({ project, index }) {
               <ExternalIcon />
             </IconLink>
           )}
-          {project.pdf && (
+          {project.pdf?.[language] && (
             <IconLink
               href={project.pdf[language]}
               target="_blank"
               rel="noreferrer"
-              aria-label="Pdf Document"
+              aria-label="PDF Document"
             >
               <ExternalIcon />
             </IconLink>

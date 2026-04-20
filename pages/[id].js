@@ -1,243 +1,34 @@
 import Image from "next/image";
-import styled, { keyframes } from "styled-components";
-import { projects } from "@/lib/projects";
+import { webProjects, gameProjects } from "@/lib/projects";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useContext } from "react";
-import { LanguageContext } from "./_app";
+import { AppContext } from "./_app";
 import { t } from "@/lib/translations";
-
-const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-`;
-
-const Page = styled.main`
-  min-height: 100vh;
-  background: #0a192f;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-  padding: 2rem;
-`;
-
-const BackLink = styled(Link)`
-  color: #ccd6f6;
-  cursor: pointer;
-  text-decoration: none;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-
-  svg {
-    width: 40px;
-    height: 40px;
-  }
-
-  &:hover {
-    color: #64ffda;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0px);
-  }
-`;
-
-const Wrapper = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  width: 100%;
-  max-width: 1000px;
-  animation: ${fadeUp} 0.6s ease both;
-  flex-direction: column;
-`;
-
-const MediaCard = styled.div`
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-`;
-
-const ImageWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  margin-top: 20px;
-
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const InfoPanel = styled.div`
-  flex: 1 1 40%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-  }
-`;
-
-const Title = styled.h1`
-  font-family: "Calibre", "Inter", sans-serif;
-  font-size: clamp(3.4rem, 2.5vw, 1.75rem);
-  font-weight: 700;
-  color: #ccd6f6;
-  margin: 0;
-  text-align: center;
-`;
-
-const Subtitle = styled.h2`
-  font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
-  font-size: clamp(2.4rem, 2.5vw, 1.75rem);
-  letter-spacing: 0.08em;
-  font-weight: 400;
-  color: #64ffda;
-  margin: 0 0 50px 0;
-`;
-
-const Headline = styled.h3`
-  font-family: "Calibre", "Inter", sans-serif;
-  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
-  font-weight: 700;
-  color: #ccd6f6;
-  margin: 0;
-`;
-
-const Description = styled.div`
-  background: #112240;
-  border-radius: 4px;
-  padding: 1.25rem 1.5rem;
-  font-size: 0.95rem;
-  line-height: 1.65;
-  color: #a8b2d8;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-`;
-
-const TechList = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const TechItem = styled.li`
-  font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 0.78rem;
-  color: #8892b0;
-  white-space: nowrap;
-`;
-
-const Category = styled.li`
-  font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 0.78rem;
-  font-weight: 900;
-  color: #64ffda;
-  white-space: nowrap;
-`;
-
-const IconRow = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-self: center;
-`;
-
-const IconLink = styled.a`
-  color: #a8b2d8;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-  display: flex;
-  align-items: center;
-
-  svg {
-    width: 40px;
-    height: 40px;
-  }
-
-  &:hover {
-    color: #64ffda;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0px);
-  }
-`;
-
-const BackIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 12H5" />
-    <polyline points="12 19 5 12 12 5" />
-  </svg>
-);
-
-const GitHubIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path
-      d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54
-      6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0
-      0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3
-      6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-    />
-  </svg>
-);
-
-const ExternalIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-    <polyline points="15 3 21 3 21 9" />
-    <line x1="10" y1="14" x2="21" y2="3" />
-  </svg>
-);
+import {
+  Page,
+  Wrapper,
+  MediaCard,
+  Title,
+  Subtitle,
+  Headline,
+  Description,
+  BackLink,
+  InfoPanel,
+  ImageGrid,
+} from "@/styles/shared";
+import { BackIcon } from "@/components/Icons";
+import MetaList from "@/components/MetaList";
+import ProjectLinks from "@/components/ProjectLinks";
+import SubProject from "@/components/SubProject";
 
 export default function ProjectDetails() {
   const router = useRouter();
   const { id } = router.query;
-  const { language } = useContext(LanguageContext);
+  const { language } = useContext(AppContext);
 
-  const projectIndex = projects.findIndex((project) => project.id === id);
-  const project = projects[projectIndex];
-
-  if (!project) {
-    return null;
-  }
+  const projects = [...webProjects, ...gameProjects];
+  const project = projects.find((p) => p.id === id);
+  if (!project) return null;
 
   return (
     <Page>
@@ -247,7 +38,9 @@ export default function ProjectDetails() {
         </BackLink>
 
         <Title>{project.title}</Title>
-        {project.subtitle && <Subtitle>{project.subtitle[language]}</Subtitle>}
+        {project.subtitle?.[language] && (
+          <Subtitle>{project.subtitle[language]}</Subtitle>
+        )}
 
         {project.video ? (
           <MediaCard>
@@ -255,11 +48,7 @@ export default function ProjectDetails() {
               src={project.video}
               poster={project.coverArt}
               controls
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </MediaCard>
         ) : (
@@ -268,251 +57,43 @@ export default function ProjectDetails() {
           </MediaCard>
         )}
 
-        <TechList>
-          {project.programmingLanguages && (
-            <>
-              <Category>{t.programmingLanguages[language]}</Category>
-              {project.programmingLanguages.map((programmingLanguage) => (
-                <TechItem key={programmingLanguage}>
-                  {programmingLanguage}
-                </TechItem>
-              ))}
-            </>
-          )}
-
-          {project.software && (
-            <>
-              <Category>{t.software[language]}</Category>
-              {project.software.map((software) => (
-                <TechItem key={software}>{software}</TechItem>
-              ))}
-            </>
-          )}
-
-          {project.date && (
-            <>
-              <Category>{t.date[language]}</Category>
-              <TechItem>{project.date}</TechItem>
-            </>
-          )}
-
-          {project.contributors && (
-            <>
-              <Category>{t.contributors[language]}</Category>
-              {project.contributors.map((contributor) => (
-                <TechItem key={contributor}>{contributor}</TechItem>
-              ))}
-            </>
-          )}
-
-          {project.music && (
-            <>
-              <Category>{t.music[language]}</Category>
-              <TechItem>{project.music}</TechItem>
-            </>
-          )}
-
-          {project.sounds && (
-            <>
-              <Category>{t.sounds[language]}</Category>
-              <TechItem>{project.sounds}</TechItem>
-            </>
-          )}
-
-          {project.roles && (
-            <>
-              <Category>{t.role[language]}</Category>
-              {project.roles[language].map((role) => (
-                <TechItem key={role}>{role}</TechItem>
-              ))}
-            </>
-          )}
-
-          {project.developer && (
-            <>
-              <Category>{t.developer[language]}</Category>
-              <TechItem>{project.developer}</TechItem>
-            </>
-          )}
-
-          {project.publisher && (
-            <>
-              <Category>{t.publisher[language]}</Category>
-              <TechItem>{project.publisher}</TechItem>
-            </>
-          )}
-        </TechList>
-
-        <IconRow>
-          {project.github && (
-            <IconLink
-              href={project.github}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-            >
-              <GitHubIcon />
-            </IconLink>
-          )}
-          {project.link && (
-            <IconLink
-              href={project.link[language]}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="External link"
-            >
-              <ExternalIcon />
-            </IconLink>
-          )}
-          {project.pdf && (
-            <IconLink
-              href={project.pdf[language]}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Pdf Document"
-            >
-              <ExternalIcon />
-            </IconLink>
-          )}
-        </IconRow>
+        <MetaList project={project} language={language} />
+        <ProjectLinks project={project} language={language} />
 
         <InfoPanel>
           <Description>
-            <Headline>{t.description[language]}</Headline>
-            {project.description[language] &&
-              project.description[language].map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            {project.images && (
-              <ImageWrapper>
-                {project.images.map((image) => (
-                  <MediaCard key={image}>
-                    <Image src={image} fill alt="Screenshot" />
-                  </MediaCard>
-                ))}
-              </ImageWrapper>
-            )}
+            <Headline>{t.contribution[language]}</Headline>
+            {project.contribution?.[language].map((parapgraph) => (
+              <p key={parapgraph}>{parapgraph}</p>
+            ))}
           </Description>
         </InfoPanel>
 
-        {project.vektoria && (
-          <>
-            <Title>{project.vektoria.title}</Title>
-
-            <MediaCard>
-              <Image
-                src={project.vektoria.coverArt}
-                fill
-                alt={project.vektoria.coverArtAlt}
-              />
-            </MediaCard>
-
-            <TechList>
-              <Category>{t.programmingLanguages[language]}</Category>
-              {project.vektoria.programmingLanguages.map(
-                (programmingLanguage) => (
-                  <TechItem key={programmingLanguage}>
-                    {programmingLanguage}
-                  </TechItem>
-                )
-              )}
-
-              <Category>{t.software[language]}</Category>
-              {project.vektoria.software.map((software) => (
-                <TechItem key={software}>{software}</TechItem>
+        {project.description?.[language] && (
+          <InfoPanel>
+            <Description>
+              <Headline>{t.description[language]}</Headline>
+              {project.description?.[language].map((parapgraph) => (
+                <p key={parapgraph}>{parapgraph}</p>
               ))}
-
-              <Category>{t.date[language]}</Category>
-              <TechItem>{project.vektoria.date}</TechItem>
-
-              {project.vektoria.contributors && (
-                <>
-                  <Category>{t.contributors[language]}</Category>
-                  {project.vektoria.contributors.map((contributor) => (
-                    <TechItem key={contributor}>{contributor}</TechItem>
+              {project.images && (
+                <ImageGrid>
+                  {project.images.map((img) => (
+                    <MediaCard key={img}>
+                      <Image src={img} fill alt="Screenshot" />
+                    </MediaCard>
                   ))}
-                </>
+                </ImageGrid>
               )}
-            </TechList>
-
-            <InfoPanel>
-              <Description>
-                <Headline>{t.description[language]}</Headline>
-                {project.vektoria.description &&
-                  project.vektoria.description[language].map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                {project.vektoria.images && (
-                  <ImageWrapper>
-                    {project.vektoria.images.map((image) => (
-                      <MediaCard key={image}>
-                        <Image src={image} fill alt="Screenshot" />
-                      </MediaCard>
-                    ))}
-                  </ImageWrapper>
-                )}
-              </Description>
-            </InfoPanel>
-          </>
+            </Description>
+          </InfoPanel>
         )}
 
+        {project.vektoria && (
+          <SubProject project={project.vektoria} language={language} />
+        )}
         {project.unity && (
-          <>
-            <Title>{project.unity.title}</Title>
-
-            <MediaCard>
-              <Image
-                src={project.unity.coverArt}
-                fill
-                alt={project.unity.coverArtAlt}
-              />
-            </MediaCard>
-
-            <TechList>
-              <Category>{t.programmingLanguages[language]}</Category>
-              {project.unity.programmingLanguages.map((programmingLanguage) => (
-                <TechItem key={programmingLanguage}>
-                  {programmingLanguage}
-                </TechItem>
-              ))}
-
-              <Category>{t.software[language]}</Category>
-              {project.unity.software.map((software) => (
-                <TechItem key={software}>{software}</TechItem>
-              ))}
-
-              <Category>{t.date[language]}</Category>
-              <TechItem>{project.vektoria.date}</TechItem>
-
-              {project.unity.contributors && (
-                <>
-                  <Category>{t.contributors[language]}</Category>
-                  {project.unity.contributors.map((contributor) => (
-                    <TechItem key={contributor}>{contributor}</TechItem>
-                  ))}
-                </>
-              )}
-            </TechList>
-
-            <InfoPanel>
-              <Description>
-                <Headline>{t.description[language]}</Headline>
-                {project.unity.description &&
-                  project.unity.description[language].map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                {project.unity.images && (
-                  <ImageWrapper>
-                    {project.unity.images.map((image) => (
-                      <MediaCard key={image}>
-                        <Image src={image} fill alt="Screenshot" />
-                      </MediaCard>
-                    ))}
-                  </ImageWrapper>
-                )}
-              </Description>
-            </InfoPanel>
-          </>
+          <SubProject project={project.unity} language={language} />
         )}
       </Wrapper>
     </Page>

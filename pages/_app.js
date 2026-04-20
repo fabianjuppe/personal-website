@@ -2,8 +2,22 @@ import { useState, useEffect, createContext } from "react";
 import styled from "styled-components";
 import GlobalStyle from "../styles";
 import { t } from "@/lib/translations";
+import Head from "next/head";
+import { IconLink } from "@/styles/shared";
+import {
+  GitHubIcon,
+  LinkedInIcon,
+  XingIcon,
+  MailIcon,
+} from "@/components/Icons";
 
-export const LanguageContext = createContext();
+export const AppContext = createContext();
+
+const AppWrapper = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
 
 const TopBar = styled.div`
   width: 100%;
@@ -11,28 +25,15 @@ const TopBar = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 20px 20px 0 20px;
-
   font-family: "SF Mono", "Fira Code", monospace;
   font-size: 0.75rem;
   color: #8892b0;
-
   background: #0a192f;
 `;
 
 const LeftIcons = styled.div`
   display: flex;
   gap: 1rem;
-`;
-
-const RightSwitch = styled.div`
-  display: flex;
-`;
-
-const SwitchWrapper = styled.div`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
 `;
 
 const Switch = styled.div`
@@ -50,6 +51,19 @@ const Switch = styled.div`
       color: #64ffda;
     }
   }
+`;
+
+const Slider = styled.div`
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 45%;
+  border-radius: 999px;
+  background: #64ffda;
+  transition: transform 0.3s ease;
+
+  transform: ${({ $language }) =>
+    $language === "en" ? "translateX(100%)" : "translateX(0%)"};
 `;
 
 const Option = styled.button`
@@ -73,62 +87,15 @@ const Option = styled.button`
     `}
 `;
 
-const Slider = styled.div`
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  width: 45%;
-  border-radius: 999px;
-  background: #64ffda;
-  transition: transform 0.3s ease;
-
-  transform: ${({ language }) =>
-    language === "en" ? "translateX(100%)" : "translateX(0%)"};
-`;
-
-const IconRow = styled.div`
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  gap: 1rem;
-  z-index: 1000;
-`;
-
-const IconLink = styled.a`
-  color: #a8b2d8;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-  display: flex;
-  align-items: center;
-
-  svg {
-    width: 26px;
-    height: 26px;
-  }
-
-  &:hover {
-    color: #64ffda;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0px);
-  }
-`;
-
 const Footer = styled.footer`
   width: 100%;
   display: flex;
   justify-content: center;
   gap: 1.5rem;
   padding: 2rem 0 1.5rem;
-
   font-family: "SF Mono", "Fira Code", monospace;
   font-size: 0.75rem;
   color: #8892b0;
-
   background: #0a192f;
 `;
 
@@ -142,93 +109,49 @@ const FooterLink = styled.a`
   }
 `;
 
-const AppWrapper = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-`;
-
-const GitHubIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-  </svg>
-);
-
-const LinkedInIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect x="2" y="9" width="4" height="12" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-
-const XingIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 7h4l4 7-4 7H3l4-7-4-7z" />
-    <path d="M17 3h4l-6 10 6 8h-4l-6-8 6-10z" />
-  </svg>
-);
-
-const MailIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="5" width="18" height="14" rx="2" />
-    <path d="M3 7l9 6 9-6" />
-  </svg>
-);
-
 export default function App({ Component, pageProps }) {
   const [language, setLanguage] = useState("de");
+  const [portfolio, setPortfolio] = useState("web");
+
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage) {
-      setLanguage(savedLanguage);
-    }
+    if (savedLanguage) setLanguage(savedLanguage);
+
+    const savedPortfolio = localStorage.getItem("portfolio");
+    if (savedPortfolio) setPortfolio(savedPortfolio);
+
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("language", language);
-  }, [language]);
+    if (mounted) localStorage.setItem("language", language);
+  }, [language, mounted]);
 
-  function toggleLanguage(lang) {
-    setLanguage(lang);
+  useEffect(() => {
+    if (mounted) localStorage.setItem("portfolio", portfolio);
+  }, [portfolio, mounted]);
+
+  function toggleLanguage(language) {
+    setLanguage(language);
   }
 
+  function togglePortfolio(portfolio) {
+    setPortfolio(portfolio);
+  }
+
+  if (!mounted) return null;
+
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage }}>
+    <AppContext.Provider value={{ language, portfolio, togglePortfolio }}>
       <GlobalStyle />
+
+      <Head>
+        <title>Fabian Juppe Portfolio</title>
+        <meta name="description" content="Fabian Juppe Portfolio" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
       <AppWrapper>
         <TopBar>
@@ -265,26 +188,18 @@ export default function App({ Component, pageProps }) {
             </IconLink>
           </LeftIcons>
 
-          <RightSwitch>
-            <Switch
-              onClick={() => toggleLanguage(language === "de" ? "en" : "de")}
-            >
-              <Slider language={language} />
+          <Switch
+            onClick={() => toggleLanguage(language === "de" ? "en" : "de")}
+          >
+            <Slider $language={language} />
 
-              <Option
-                data-active={language === "de"}
-                active={language === "de"}
-              >
-                DE
-              </Option>
-              <Option
-                data-active={language === "en"}
-                active={language === "en"}
-              >
-                EN
-              </Option>
-            </Switch>
-          </RightSwitch>
+            <Option data-active={language === "de"} active={language === "de"}>
+              DE
+            </Option>
+            <Option data-active={language === "en"} active={language === "en"}>
+              EN
+            </Option>
+          </Switch>
         </TopBar>
 
         <div style={{ flex: 1 }}>
@@ -298,6 +213,6 @@ export default function App({ Component, pageProps }) {
           </FooterLink>
         </Footer>
       </AppWrapper>
-    </LanguageContext.Provider>
+    </AppContext.Provider>
   );
 }
